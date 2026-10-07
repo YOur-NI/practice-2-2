@@ -27,7 +27,7 @@ import { applyFilters } from "./task3-filters";
 //   фильтр автоматически — отдельный if не нужен
 export const filterByTitle = (query: string): BookFilter => {
   return (book: Book) => {
-    return false; // <-- TODO 1: ЗАМЕНИТЕ на проверку названия
+    return book.title.toLowerCase().includes(query.toLowerCase());
   };
 };
 
@@ -42,10 +42,11 @@ export const filterByTitle = (query: string): BookFilter => {
 //   3. ?? 0: year и rating могут быть undefined, подставляем ноль,
 //      чтобы книги без данных опустились в конец
 export function sortBooks(books: Book[], sortType: "year" | "rating"): Book[] {
+  const booksCopy = [...books];
   if (sortType === "year") {
-    return books; // <-- TODO 2: ЗАМЕНИТЕ на копию с сортировкой по году
+    return booksCopy.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
   }
-  return books; // <-- TODO 3: ЗАМЕНИТЕ на копию с сортировкой по рейтингу
+  return booksCopy.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 }
 
 // ------------------------------------------------------------
@@ -60,5 +61,6 @@ export function filterAndSortBooks(
   query: string,
   sortType: "year" | "rating"
 ): Book[] {
-  return []; // <-- TODO 4: ЗАМЕНИТЕ на композицию applyFilters + sortBooks
+  const filteredBooks = applyFilters(books, [filterByTitle(query)]);
+  return sortBooks(filteredBooks, sortType);
 }
